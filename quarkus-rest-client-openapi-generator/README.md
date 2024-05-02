@@ -28,6 +28,6 @@ Running :
 mvn clean package
 ```
 will :
-- download the latest OpenAPI specification from the aglae.ai API documentation site (c.f. `wagon-maven-plugin` in `pom.xml`).
+- download the latest OpenAPI specification from the aglae.ai API documentation site (if you uncomment the `wagon-maven-plugin` in `pom.xml`).
 - generate the Java client code from the OpenAPI specification (output in `target/generated-sources/open-api-json`).
 - Run [a test](./src/test/java/ai/aglae/client/quarkus/ApiClientTest.java) that uses the generated client code with the authentication plumbing to call the aglae.ai API `/hello` endpoint.
