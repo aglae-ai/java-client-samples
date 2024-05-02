@@ -1,0 +1,907 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/hello": {
+      "get": {
+        "operationId": "sayHello",
+        "summary": "Say hello 👋",
+        "description": "Useful to verify your authentication is working",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HelloDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/job-seeker": {
+      "put": {
+        "operationId": "upsertJobSeeker",
+        "summary": "Upsert Job Seeker in order to match with offers",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobSeekerInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/job-seeker/csv": {
+      "post": {
+        "operationId": "upsertJobSeekersCsv",
+        "summary": "Upsert Job Seekers in CSV format",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/offer": {
+      "put": {
+        "operationId": "upsertOffer",
+        "summary": "Upsert Offer in order to match with job seekers",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/offer/{offerId}/qualification-session": {
+      "post": {
+        "operationId": "createQualificationSession",
+        "summary": "Starts a session to qualify job seekers following the given criteria",
+        "parameters": [
+          {
+            "name": "offerId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QualificationSessionInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/matching/{offerId}": {
+      "get": {
+        "operationId": "matchedJobSeekers",
+        "summary": "Get matched job seekers for a given offer",
+        "parameters": [
+          {
+            "name": "offerId",
+            "required": true,
+            "in": "path",
+            "description": "Offer identifier",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No offer found"
+          },
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatchingOutputDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "info": {
+    "title": "Aglae.ai API",
+    "description": "The documentation of Aglae.ai API services.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "HelloDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "Experience": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "endDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "duration": {
+            "type": "number"
+          },
+          "jobTitle": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "startDate",
+          "endDate",
+          "duration",
+          "jobTitle",
+          "description",
+          "companyName",
+          "location"
+        ]
+      },
+      "DesiredJob": {
+        "type": "object",
+        "properties": {
+          "romeId": {
+            "type": "string"
+          },
+          "romeLabel": {
+            "type": "string"
+          },
+          "romeDescriptionId": {
+            "type": "string"
+          },
+          "romeDescriptionLabel": {
+            "type": "string"
+          },
+          "minimumContractDuration": {
+            "type": "number",
+            "nullable": true
+          },
+          "maximumContractDuration": {
+            "type": "number",
+            "nullable": true
+          },
+          "desiredWage": {
+            "type": "number",
+            "nullable": true
+          },
+          "desiredWageUnit": {
+            "type": "string",
+            "nullable": true
+          },
+          "experienceDuration": {
+            "type": "number"
+          },
+          "experienceDurationUnit": {
+            "type": "string"
+          },
+          "mobilityDistance": {
+            "type": "number",
+            "nullable": true
+          },
+          "mobilityDistanceUnit": {
+            "type": "string",
+            "nullable": true
+          },
+          "jobTypology": {
+            "type": "string"
+          },
+          "topore": {
+            "type": "boolean"
+          },
+          "topcreffranchise": {
+            "type": "boolean"
+          },
+          "topcrefcreation": {
+            "type": "boolean"
+          },
+          "topcrefreprise": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "romeId",
+          "romeLabel",
+          "romeDescriptionId",
+          "romeDescriptionLabel",
+          "minimumContractDuration",
+          "maximumContractDuration",
+          "desiredWage",
+          "desiredWageUnit",
+          "experienceDuration",
+          "experienceDurationUnit",
+          "mobilityDistance",
+          "mobilityDistanceUnit",
+          "jobTypology",
+          "topore",
+          "topcreffranchise",
+          "topcrefcreation",
+          "topcrefreprise"
+        ]
+      },
+      "Training": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "graduationYear": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "graduationYear"
+        ]
+      },
+      "LanguageLevel": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "FLUENT",
+              "GOOD",
+              "VERY_GOOD"
+            ]
+          }
+        },
+        "required": [
+          "language",
+          "level"
+        ]
+      },
+      "License": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "label"
+        ]
+      },
+      "JobSeekerInputDto": {
+        "type": "object",
+        "properties": {
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "experiences": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Experience"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "office": {
+            "type": "string"
+          },
+          "zipCode": {
+            "type": "string"
+          },
+          "consentToSmsReception": {
+            "type": "boolean"
+          },
+          "consentToEmailReception": {
+            "type": "boolean"
+          },
+          "desiredJobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DesiredJob"
+            }
+          },
+          "trainings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Training"
+            }
+          },
+          "languagesLevel": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LanguageLevel"
+            }
+          },
+          "licenses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/License"
+            }
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "availabilityScore": {
+            "type": "number"
+          },
+          "availabilityScoreExplanation": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "updatedAt",
+          "experiences",
+          "id",
+          "office",
+          "zipCode",
+          "consentToSmsReception",
+          "consentToEmailReception",
+          "desiredJobs",
+          "trainings",
+          "languagesLevel",
+          "licenses",
+          "skills",
+          "availabilityScore",
+          "availabilityScoreExplanation"
+        ]
+      },
+      "Language": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "proficiencyLevel": {
+            "type": "string"
+          },
+          "proficiencyLevelLabel": {
+            "type": "string"
+          },
+          "exigibilitelangue": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "label",
+          "proficiencyLevel",
+          "proficiencyLevelLabel",
+          "exigibilitelangue"
+        ]
+      },
+      "AdditionalPay": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "label"
+        ]
+      },
+      "OfferInputDto": {
+        "type": "object",
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "validationDate": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "stateLabel": {
+            "type": "string"
+          },
+          "topoffrepartenaireaom": {
+            "type": "boolean"
+          },
+          "screeningMode": {
+            "type": "string"
+          },
+          "screeningModeLabel": {
+            "type": "string"
+          },
+          "unitesuivi": {
+            "type": "number"
+          },
+          "romeId": {
+            "type": "string"
+          },
+          "romeLabel": {
+            "type": "string"
+          },
+          "romeDescriptionId": {
+            "type": "string"
+          },
+          "romeDescriptionLabel": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "initialOpenPositions": {
+            "type": "number"
+          },
+          "remainingOpenPositions": {
+            "type": "number"
+          },
+          "languages": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Language"
+            }
+          },
+          "licenses": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/License"
+            }
+          },
+          "duration": {
+            "type": "number",
+            "nullable": true
+          },
+          "durationUnit": {
+            "type": "string",
+            "nullable": true
+          },
+          "durationUnitLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "contractType": {
+            "type": "string"
+          },
+          "contractTypeLabel": {
+            "type": "string"
+          },
+          "contractSummary": {
+            "type": "string"
+          },
+          "requiredExperience": {
+            "type": "number",
+            "nullable": true
+          },
+          "requiredExperienceUnit": {
+            "type": "string",
+            "nullable": true
+          },
+          "requiredExperienceComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "requiredExperienceSummary": {
+            "type": "string"
+          },
+          "minimumWage": {
+            "type": "number",
+            "nullable": true
+          },
+          "maximumWage": {
+            "type": "number",
+            "nullable": true
+          },
+          "durationMonth": {
+            "type": "number",
+            "nullable": true
+          },
+          "wageComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "wageTypeLabel": {
+            "type": "string"
+          },
+          "additionalPays": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdditionalPay"
+            }
+          },
+          "wageSummary": {
+            "type": "string",
+            "nullable": true
+          },
+          "businessTripFrequencyLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "businessTripType": {
+            "type": "string",
+            "nullable": true
+          },
+          "workingConditionsSummary": {
+            "type": "string",
+            "nullable": true
+          },
+          "scheduleTypeLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "scheduleTypeDetail": {
+            "type": "string",
+            "nullable": true
+          },
+          "lblconditionexercice": {
+            "type": "string"
+          },
+          "weeklyWorkedHours": {
+            "type": "number"
+          },
+          "weeklyWorkedMinutes": {
+            "type": "number",
+            "nullable": true
+          },
+          "isPartTime": {
+            "type": "boolean"
+          },
+          "scheduleSummary": {
+            "type": "string"
+          },
+          "skills": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tasks": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "skillsFreeText": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "softSkills": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "trainings": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Training"
+            }
+          },
+          "locationLabel": {
+            "type": "string"
+          },
+          "zipCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "cityZipCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "cityLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "departmentCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "departmentLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "regionCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "regionLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryLabel": {
+            "type": "string"
+          },
+          "topfrontalierlieutravail": {
+            "type": "boolean"
+          },
+          "locationSummary": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "number",
+            "nullable": true
+          },
+          "siret": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyDescription": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "subClassNAF": {
+            "type": "string"
+          },
+          "subClassNAFLabel": {
+            "type": "string"
+          },
+          "companySummary": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "createdAt",
+          "validationDate",
+          "id",
+          "state",
+          "stateLabel",
+          "topoffrepartenaireaom",
+          "screeningMode",
+          "screeningModeLabel",
+          "unitesuivi",
+          "romeId",
+          "romeLabel",
+          "romeDescriptionId",
+          "romeDescriptionLabel",
+          "title",
+          "description",
+          "initialOpenPositions",
+          "remainingOpenPositions",
+          "languages",
+          "licenses",
+          "duration",
+          "durationUnit",
+          "durationUnitLabel",
+          "contractType",
+          "contractTypeLabel",
+          "contractSummary",
+          "requiredExperience",
+          "requiredExperienceUnit",
+          "requiredExperienceComment",
+          "requiredExperienceSummary",
+          "minimumWage",
+          "maximumWage",
+          "durationMonth",
+          "wageComment",
+          "wageTypeLabel",
+          "additionalPays",
+          "wageSummary",
+          "businessTripFrequencyLabel",
+          "businessTripType",
+          "workingConditionsSummary",
+          "scheduleTypeLabel",
+          "scheduleTypeDetail",
+          "lblconditionexercice",
+          "weeklyWorkedHours",
+          "weeklyWorkedMinutes",
+          "isPartTime",
+          "scheduleSummary",
+          "skills",
+          "tasks",
+          "skillsFreeText",
+          "softSkills",
+          "trainings",
+          "locationLabel",
+          "zipCode",
+          "cityZipCode",
+          "cityLabel",
+          "departmentCode",
+          "departmentLabel",
+          "regionCode",
+          "regionLabel",
+          "countryLabel",
+          "topfrontalierlieutravail",
+          "locationSummary",
+          "latitude",
+          "longitude",
+          "siret",
+          "companyDescription",
+          "companyName",
+          "subClassNAF",
+          "subClassNAFLabel",
+          "companySummary"
+        ]
+      },
+      "Criterion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ]
+      },
+      "JobSeeker": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "mobilePhone": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "mobilePhone",
+          "firstName"
+        ]
+      },
+      "QualificationSessionInputDto": {
+        "type": "object",
+        "properties": {
+          "criteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Criterion"
+            }
+          },
+          "jobSeekers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JobSeeker"
+            }
+          }
+        },
+        "required": [
+          "criteria",
+          "jobSeekers"
+        ]
+      },
+      "MatchingOutputDto": {
+        "type": "object",
+        "properties": {
+          "jobSeekerId": {
+            "type": "string"
+          },
+          "matchingScore": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "jobSeekerId",
+          "matchingScore"
+        ]
+      }
+    }
+  }
+}

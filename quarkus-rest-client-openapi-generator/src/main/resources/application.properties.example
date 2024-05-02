@@ -1,0 +1,6 @@
+quarkus.openapi-generator.codegen.spec.aglae_ai.model-name-prefix=QuarkusOpenApiGenerator
+quarkus.rest-client.openapi_json.url=https://api.aglae.ai
+AGLAE_AI_JSON_KEY=[PATH_TO_JSON_PRIVATE_KEY]
+
+# Uncomment the following line if you have disable the auto registration of client providers :
+#quarkus.rest-client.openapi_json.providers=client_auth.ai.aglae.client.quarkus.GoogleAuthFilter
